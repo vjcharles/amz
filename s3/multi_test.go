@@ -13,7 +13,7 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"gopkg.in/amz.v1/s3"
+	"github.com/vjcharles/amz/s3"
 )
 
 func (s *S) TestInitMulti(c *C) {
