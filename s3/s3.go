@@ -23,7 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/amz.v1/aws"
+	"github.com/vjcharles/amz/aws"
 )
 
 const debug = false
@@ -184,18 +184,19 @@ func (b *Bucket) GetReader(path string) (rc io.ReadCloser, err error) {
 // Put inserts an object into the S3 bucket.
 //
 // See http://goo.gl/FEBPD for details.
-func (b *Bucket) Put(path string, data []byte, contType string, perm ACL) error {
+func (b *Bucket) Put(path string, data []byte, contType string, perm ACL, contEncoding string) error {
 	body := bytes.NewBuffer(data)
-	return b.PutReader(path, body, int64(len(data)), contType, perm)
+	return b.PutReader(path, body, int64(len(data)), contType, perm, contEncoding)
 }
 
 // PutReader inserts an object into the S3 bucket by consuming data
 // from r until EOF.
-func (b *Bucket) PutReader(path string, r io.Reader, length int64, contType string, perm ACL) error {
+func (b *Bucket) PutReader(path string, r io.Reader, length int64, contType string, perm ACL, contEncoding string) error {
 	headers := map[string][]string{
-		"Content-Length": {strconv.FormatInt(length, 10)},
-		"Content-Type":   {contType},
-		"x-amz-acl":      {string(perm)},
+		"Content-Length":   {strconv.FormatInt(length, 10)},
+		"Content-Type":     {contType},
+		"Content-Encoding": {string(contEncoding)},
+		"x-amz-acl":        {string(perm)},
 	}
 	req := &request{
 		method:  "PUT",
